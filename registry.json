@@ -1,0 +1,11 @@
+[
+  {
+    "id": "github-stars",
+    "title": "GitHub Stars",
+    "category": "content",
+    "description": "Live GitHub star counts on any element — progressive enhancement, cached in the browser, no build-time network.",
+    "runsAt": "client",
+    "author": "victorantos",
+    "path": "github-stars"
+  }
+]

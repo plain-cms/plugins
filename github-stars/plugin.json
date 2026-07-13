@@ -1,0 +1,7 @@
+{
+  "name": "github-stars",
+  "version": "1.0.0",
+  "description": "Live GitHub star counts. Replaces the baked-in number on any [data-gh-stars=\"owner/repo\"] element with the current count from api.github.com, cached in localStorage. Progressive enhancement — the baked number shows when JavaScript is off.",
+  "client": { "js": "client.js" },
+  "options": { "ttlHours": 12 }
+}

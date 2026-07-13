@@ -1,0 +1,7 @@
+{
+  "name": "your-plugin",
+  "version": "1.0.0",
+  "description": "One sentence describing what your plugin does.",
+  "client": { "js": "client.js" },
+  "options": {}
+}
