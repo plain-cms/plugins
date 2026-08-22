@@ -1,0 +1,73 @@
+/* lightbox — fullscreen image dialog. The backdrop is always dark translucent,
+   so the controls carry their own contrast and stay legible on any theme,
+   light or dark. */
+
+.pl-zoomable { cursor: zoom-in; }
+.pl-zoomable:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+.plain-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 12, 16, 0.88);
+  animation: pl-fade 0.18s ease;
+}
+
+.pl-figure {
+  margin: 0;
+  max-width: 92vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  animation: pl-zoom 0.18s ease;
+}
+.pl-img {
+  max-width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  object-fit: contain;
+}
+.pl-caption {
+  color: #e7e8ea;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 60ch;
+}
+
+.pl-close, .pl-prev, .pl-next {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 999px;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+}
+.pl-close:hover, .pl-prev:hover, .pl-next:hover { background: rgba(255, 255, 255, 0.28); }
+.pl-close:focus-visible, .pl-prev:focus-visible, .pl-next:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.pl-close { top: 1rem; right: 1rem; }
+.pl-prev { left: 1rem; top: 50%; transform: translateY(-50%); }
+.pl-next { right: 1rem; top: 50%; transform: translateY(-50%); }
+
+@keyframes pl-fade { from { opacity: 0; } }
+@keyframes pl-zoom { from { transform: scale(0.96); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .plain-lightbox, .pl-figure { animation: none; }
+}

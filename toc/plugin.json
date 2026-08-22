@@ -1,0 +1,8 @@
+{
+  "name": "toc",
+  "version": "1.0.0",
+  "description": "Build-time table of contents generated from each page's headings and injected after the title — zero client JavaScript.",
+  "hooks": ["renderPage"],
+  "client": { "css": "client.css" },
+  "options": { "minHeadings": 3, "depth": 3, "heading": "Contents" }
+}

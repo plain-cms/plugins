@@ -1,0 +1,17 @@
+{
+  "name": "comments",
+  "version": "1.0.0",
+  "description": "GitHub-Discussions-backed comments via the giscus embed, appended after the article. Progressive enhancement; nothing renders without JavaScript.",
+  "client": { "js": "client.js", "css": "client.css" },
+  "options": {
+    "repo": "",
+    "repoId": "",
+    "category": "",
+    "categoryId": "",
+    "mapping": "pathname",
+    "reactionsEnabled": true,
+    "lang": "en",
+    "pathPrefix": ""
+  },
+  "note": "Requires GitHub Discussions enabled on a public repo and the giscus app installed. Get repo, repoId, category and categoryId from https://giscus.app — comments stay hidden until repo and repoId are set."
+}

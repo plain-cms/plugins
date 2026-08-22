@@ -1,0 +1,10 @@
+/* comments — spacing for the giscus section appended after the article.
+   giscus themes itself (preferred_color_scheme), so no colors here. */
+
+.plain-comments {
+  margin-top: 3rem;
+}
+.plain-comments .giscus,
+.plain-comments .giscus-frame {
+  width: 100%;
+}

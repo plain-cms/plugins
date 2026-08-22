@@ -1,0 +1,7 @@
+{
+  "name": "lightbox",
+  "version": "1.0.0",
+  "description": "Click-to-zoom for content images — a fullscreen viewer with captions from alt text and keyboard navigation. Progressive enhancement; images render normally with JavaScript off.",
+  "client": { "js": "client.js", "css": "client.css" },
+  "options": { "selector": "article img, main img", "captions": true }
+}

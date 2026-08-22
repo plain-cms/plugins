@@ -1,0 +1,7 @@
+{
+  "name": "related-posts",
+  "version": "1.0.0",
+  "description": "A build-time \"Related posts\" section under each post — scored by shared tags and title words, plain HTML with zero client JavaScript.",
+  "client": { "css": "client.css" },
+  "options": { "collection": "posts", "count": 3, "heading": "Related posts" }
+}

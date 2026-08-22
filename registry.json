@@ -7,5 +7,41 @@
     "runsAt": "client",
     "author": "victorantos",
     "path": "github-stars"
+  },
+  {
+    "id": "comments",
+    "title": "Comments",
+    "category": "community",
+    "description": "GitHub-Discussions-backed comments on your posts via the giscus embed — client-only progressive enhancement, nothing renders without JavaScript or configuration.",
+    "runsAt": "client",
+    "author": "victorantos",
+    "path": "comments"
+  },
+  {
+    "id": "related-posts",
+    "title": "Related Posts",
+    "category": "content",
+    "description": "Build-time related-articles section under each post — scored by shared tags and title words, zero client JavaScript.",
+    "runsAt": "build",
+    "author": "victorantos",
+    "path": "related-posts"
+  },
+  {
+    "id": "toc",
+    "title": "Table of Contents",
+    "category": "content",
+    "description": "Build-time table of contents from each page's headings, injected after the title — zero client JavaScript.",
+    "runsAt": "build",
+    "author": "victorantos",
+    "path": "toc"
+  },
+  {
+    "id": "lightbox",
+    "title": "Lightbox",
+    "category": "media",
+    "description": "Click-to-zoom for content images — a fullscreen viewer with alt-text captions and keyboard navigation, no build step and no network calls.",
+    "runsAt": "client",
+    "author": "victorantos",
+    "path": "lightbox"
   }
 ]

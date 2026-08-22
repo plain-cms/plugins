@@ -13,6 +13,10 @@ visitors' browsers — so every plugin listed here is reviewed before it ships. 
 | Plugin | Runs | What it does |
 | ------ | ---- | ------------ |
 | [github-stars](github-stars/) | client | Live GitHub star counts on any `[data-gh-stars]` element. |
+| [comments](comments/) | client | GitHub-Discussions-backed comments on your posts via the giscus embed. |
+| [related-posts](related-posts/) | build | Related-articles section under each post, scored by shared tags and title words. |
+| [toc](toc/) | build | Table of contents from each page's headings, injected after the title. |
+| [lightbox](lightbox/) | client | Click-to-zoom fullscreen viewer for content images with alt-text captions. |
 
 ## How install works
 

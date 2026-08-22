@@ -1,0 +1,45 @@
+/* toc — compact contents box injected at build time. Inherits the theme's
+   fonts and link color; box chrome derives from neutral translucent grays so
+   it sits quietly on light and dark themes alike. */
+
+.plain-toc {
+  margin: 1.25rem 0 1.75rem;
+  padding: 0.7rem 1rem 0.8rem;
+  border: 1px solid rgba(127, 127, 127, 0.28);
+  border-radius: 8px;
+  background: rgba(127, 127, 127, 0.07);
+  font-size: 0.88em;
+  font-weight: 400;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.plain-toc > strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.plain-toc ol {
+  margin: 0;
+  padding-left: 1.15rem;
+  list-style: decimal;
+}
+.plain-toc ol ol { list-style: lower-alpha; }
+.plain-toc li { margin: 0.1rem 0; }
+/* ::marker doesn't take opacity; a mid-gray mutes markers on both themes. */
+.plain-toc li::marker { color: rgb(127, 127, 127); }
+
+.plain-toc a { text-decoration: none; }
+.plain-toc a:hover { text-decoration: underline; }
+
+@media (prefers-color-scheme: dark) {
+  .plain-toc {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
