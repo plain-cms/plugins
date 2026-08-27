@@ -1,7 +1,7 @@
 {
   "name": "cv",
   "title": "CV / Résumé",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Publishes a CV/résumé page from Markdown, with as many variants as you like — one is live at a time, chosen in this plugin's settings.",
   "hooks": ["init", "afterBuild"],
   "client": { "js": "client.js", "css": "client.css" },

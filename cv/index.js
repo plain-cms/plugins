@@ -114,8 +114,13 @@ function pickActive(variants, activeVariant, name) {
 /** The template context for one variant: the CV is the page's content. */
 function pageContext(variant, url, site) {
   const person = variant.name || variant.title || site.config.site.title;
+  // The <h1> is the CV's own, so page.title is only the browser tab and the
+  // link preview — worth the job title as well as the name. A role line tends
+  // to run "Senior Engineer — Backend · C# · Azure"; only the part before the
+  // first separator is the job title, and the rest would bloat the tab.
+  const headline = String(variant.role || '').split(/\s[—–·|]\s/)[0].trim();
   return {
-    title: person,
+    title: headline ? `${person} — ${headline}` : person,
     description: variant.description || variant.summary || '',
     url,
     content: cvHtml(variant, person),

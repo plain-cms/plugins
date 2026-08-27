@@ -175,17 +175,29 @@
   border-radius: var(--cv-radius);
   background: var(--cv-surface);
 }
-.cv-card img,
-.cv-card .cv-card-icon {
+/* An icon is either an <img> or a <span class="cv-icon"> carrying a
+ * background-image; both size themselves to the block they sit in. */
+.cv-icon, .cv-card img, .cv-tile img {
   display: block;
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
   border-radius: var(--cv-radius-s);
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 }
+.cv-icon--letter {
+  display: grid;
+  place-items: center;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  font-family: var(--cv-mono);
+  font-weight: 700;
+}
+.cv-card .cv-icon, .cv-card img { width: 52px; height: 52px; }
+.cv-card-body { min-width: 0; }
 .cv-card h3 { margin: 0 0 var(--cv-1); font-size: var(--cv-m); }
+.cv-card h3 .cv-kicker { font-weight: 400; font-size: var(--cv-s); color: var(--color-muted); }
 .cv-card p { margin: 0 0 var(--cv-1); font-size: var(--cv-s); }
 .cv-card p:last-child { margin-bottom: 0; }
 .cv-card .cv-facts { font-family: var(--cv-mono); font-size: var(--cv-xs); color: var(--color-muted); }
@@ -223,7 +235,8 @@
   text-decoration: none;
 }
 .cv-tile:hover { border-color: var(--color-accent); }
-.cv-tile img { width: 34px; height: 34px; border-radius: var(--cv-radius-s); flex-shrink: 0; }
+.cv-tile .cv-icon, .cv-tile img { width: 34px; height: 34px; }
+.cv-tile-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .cv-tile strong { display: block; font-size: var(--cv-s); color: var(--color-text); }
 .cv-tile span { display: block; font-size: var(--cv-xs); color: var(--color-muted); line-height: 1.3; }
 
@@ -268,6 +281,9 @@
     background: #fff !important;
     max-width: 100%;
   }
+  /* Nothing outside the page's own content belongs on paper — the masthead,
+   * the footer, and any widget a plugin parked at the end of <body>. */
+  body:has(.plain-cv):has(> main) > *:not(main) { display: none !important; }
   body:has(.plain-cv) > header,
   body:has(.plain-cv) > footer,
   body:has(.plain-cv) .skip-link { display: none !important; }

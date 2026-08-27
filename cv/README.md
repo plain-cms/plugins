@@ -66,6 +66,9 @@ Rules worth knowing:
   set off with a rule; `###` is a role or a project inside one.
 - **The italic line under a `###`** (`*2021–Present | Lisbon*`) is treated as that
   entry's dates and place, and styled apart from the body text.
+- **The page's `<title>`** is "name — role", shortened to the part of the role
+  before its first separator (`Senior Engineer — Backend · Go` becomes
+  `Alex Rivera — Senior Engineer`). The `<h1>` on the page is the name alone.
 - **`draft: true`** hides a variant from the build entirely, active or not.
 - A variant is **never** published at its own URL unless `publishAllVariants` is on.
 
@@ -78,13 +81,17 @@ the Markdown around them still renders):
 | Markup | What it gives you |
 | ------ | ----------------- |
 | `<table class="cv-skills"><tr><th>Backend</th><td>Go · Python</td></tr></table>` | A skills matrix: labelled rows that wrap on a phone |
-| `<div class="cv-cards"><div class="cv-card">…</div></div>` | Project cards: an image or `<span class="cv-card-icon">`, a heading, a line of prose, a `<p class="cv-facts">` |
+| `<div class="cv-cards"><div class="cv-card">…</div></div>` | Project cards: an icon, then a `<div class="cv-card-body">` with a heading (`<span class="cv-kicker">` for the aside in it), a line of prose, and a `<p class="cv-facts">` |
 | `<ul class="cv-pills"><li><a class="cv-pill" href="…"><strong>repo</strong> <span>what it is</span></a></li></ul>` | A compact strip of links — open-source repos, talks, certifications |
-| `<ul class="cv-grid"><li><a class="cv-tile" href="…"><strong>Name</strong><span>One line</span></a></li></ul>` | A tiled grid of smaller projects |
+| `<ul class="cv-grid"><li><a class="cv-tile" href="…"><div class="cv-tile-text"><strong>Name</strong><span>One line</span></div></a></li></ul>` | A tiled grid of smaller projects |
 | `<ul class="cv-dated"><li><a href="…">Title</a><time>March 2026</time></li></ul>` | A list with dates aligned to the right — writing, talks |
 | `<p class="cv-note">…</p>` | The closing availability note |
 | `<div class="cv-web-only">…</div>` | Shown on the page, dropped from the printed PDF |
 | `<div class="cv-print-only">…</div>` | The reverse — only appears in print |
+
+Icons are either an `<img>` or a `<span class="cv-icon" style="background-image: url('…')">`
+— both size themselves to the block they're in. `<span class="cv-icon cv-icon--letter">B</span>`
+draws a lettered tile for a project with no logo.
 
 `cv-web-only` is how a web CV stays richer than a paper one: put the project
 cards and the writing list in it, and the PDF stays the lean two pages a
