@@ -46,6 +46,7 @@ pdf: /media/alex-rivera-cv.pdf  # optional: a real file to download, instead of
                                 # the print button
 date: 2026-08-01                # optional: last revised — the page's sitemap lastmod
 header: true                    # false when the body brings its own header markup
+stylesheet: /cv-classical.css   # optional: a CSS file to link on this CV's page
 draft: false
 ---
 
@@ -104,9 +105,10 @@ A CV can be a design in its own right rather than a page in your theme's clothes
 Set **`header: false`** and the plugin renders no header of its own — `name` and
 `role` still fill in the browser tab and the link preview, but the body's markup
 is the whole page, and the theme's page title is left alone unless that markup
-has an `<h1>` of its own. Style it from a `<style>` block in the body, or from a
-stylesheet the site already serves; the plugin only asks that the CV lives inside
-the `.plain-cv` wrapper it provides.
+has an `<h1>` of its own. Style it from a `<style>` block in the body, or — better when several variants
+share one design — put the CSS in a file the site serves and name it in
+**`stylesheet:`**, which links it last in the page's `<head>`. The plugin only
+asks that the CV lives inside the `.plain-cv` wrapper it provides.
 
 Such a page usually wants its own colours on paper too. The print sheet sets its
 ink palette on `:root`, so re-declaring the same custom properties under

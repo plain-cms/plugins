@@ -29,6 +29,7 @@ const FIELDS = [
   { name: 'description', type: 'text' },
   { name: 'date', type: 'date' }, // optional: when this CV was last revised — the page's sitemap lastmod
   { name: 'header', type: 'boolean', default: true }, // false when the body brings its own header markup
+  { name: 'stylesheet', type: 'text' }, // optional: a CSS file to link on this CV's page
   { name: 'draft', type: 'boolean', default: false },
 ];
 
@@ -84,6 +85,11 @@ export default {
       // Only when the CV supplies a heading of its own — a variant that opted
       // out of the built-in header and doesn't provide one keeps the theme's.
       if (/<h1\b/i.test(content)) html = stripThemeHeading(html);
+      // Last in <head>, so a design's own rules settle ties with the theme and
+      // with this plugin's stylesheet. One file can dress every variant.
+      if (variant.stylesheet) {
+        html = html.replace('</head>', `<link rel="stylesheet" href="${esc(withBasePath(variant.stylesheet, site))}">\n</head>`);
+      }
       if (!indexed) html = html.replace('</head>', '<meta name="robots" content="noindex">\n</head>');
       fs.mkdirSync(path.dirname(target), { recursive: true });
       fs.writeFileSync(target, html);
@@ -103,6 +109,13 @@ export default {
 };
 
 const collection = (options) => options.collection || 'cv';
+
+/** Root-relative URLs need the site's basePath — the build already rewrote the
+ *  page's own by the time a plugin adds one. */
+function withBasePath(url, site) {
+  const base = String(site.config.site.basePath || '').replace(/\/+$/, '');
+  return base && url.startsWith('/') && !url.startsWith('//') ? base + url : url;
+}
 const warn = (message) => console.log(`  ⚠ cv: ${message}`);
 
 /** The variant named in the settings; the only one when there's only one; else the first, loudly. */
