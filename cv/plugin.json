@@ -1,7 +1,7 @@
 {
   "name": "cv",
   "title": "CV / Résumé",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Publishes one of your pages as the live CV. Any page can be a CV — pick which one is current, attach a PDF, and put the download button where you want it.",
   "hooks": ["renderPage", "afterBuild"],
   "client": { "js": "client.js", "css": "client.css" },

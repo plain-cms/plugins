@@ -277,13 +277,15 @@ a.cv-print-ready { cursor: pointer; }
  * with the screen styles, which is still a correct page. */
 
 @media print {
-  html:has(body[data-cv]) { font-size: 13px; } /* the tokens are rem-based, so this scales the whole CV */
+  html:has([data-cv]) { font-size: 13px; } /* the tokens are rem-based, so this scales the whole CV */
   /* Ink on paper, whatever the site's scheme is. These land on :root, not on
    * body: a variant that ships its own palette declares it at :root too, and
    * an inherited custom property is resolved by proximity, so a declaration on
-   * body would beat it everywhere inside. At equal specificity the page's own
-   * (later) stylesheet wins, which is the point. */
-  :root:has(body[data-cv]) {
+   * body would beat it everywhere inside. Matched through the bare attribute so
+   * this selector ties with a page's own :root:root rather than outranking it —
+   * at equal specificity the page's (later) stylesheet wins, which is the
+   * point. */
+  :root:has([data-cv]) {
     --color-bg: #fff;
     --color-surface: #fff;
     --color-text: #1a1a1a;
