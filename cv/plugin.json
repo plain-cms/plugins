@@ -1,7 +1,7 @@
 {
   "name": "cv",
   "title": "CV / Résumé",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Publishes a CV/résumé page from Markdown, with as many variants as you like — one is live at a time, chosen in this plugin's settings.",
   "hooks": ["init", "afterBuild"],
   "client": { "js": "client.js", "css": "client.css" },
@@ -12,7 +12,8 @@
     "label": "CV",
     "printButton": true,
     "printButtonLabel": "Download PDF",
-    "publishAllVariants": false
+    "publishAllVariants": false,
+    "hideSource": true
   },
-  "note": "Each variant is one Markdown file in content/cv/ — edit them under \"CV\" in the sidebar. Set activeVariant to the filename (without .md) of the one that should be live; leave it empty when you only have one."
+  "note": "Each variant is one Markdown file in content/cv/ — edit them under \"CV\" in the sidebar. Set activeVariant to the filename (without .md) of the one that should be live — or to \"pages/<slug>\" to make a page you already have the live CV. Leave it empty when you only have one variant."
 }

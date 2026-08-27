@@ -60,6 +60,24 @@ export default {
   },
 
   /**
+   * When the active CV is an existing page of the site, that page is also the
+   * CV's source — two addresses, one document. Point search engines at the CV
+   * and leave the original reachable but unindexed. Opt out with
+   * "hideSource": false.
+   */
+  renderPage(page, html, site, options) {
+    if (options.hideSource === false || !page?.url) return html;
+    const active = pickActive(site.collections[collection(options)] || [], options.activeVariant, site, collection(options), true);
+    if (!active?.url || active.url !== page.url) return html;
+    const url = site.config.site.url + normalizeUrl(options.url);
+    const canonical = `<link rel="canonical" href="${esc(url)}">`;
+    html = /<link rel="canonical"[^>]*>/i.test(html)
+      ? html.replace(/<link rel="canonical"[^>]*>/i, canonical)
+      : html.replace('</head>', `${canonical}\n</head>`);
+    return html.replace('</head>', '<meta name="robots" content="noindex, follow">\n</head>');
+  },
+
+  /**
    * Publish the active variant at options.url, and (optionally) every other
    * variant at a private link under it. Written in afterBuild so the page is a
    * real file in dist/, listed in sitemap.xml and the search index like any
@@ -68,11 +86,8 @@ export default {
   afterBuild(distPath, site, options) {
     const name = collection(options);
     const variants = site.collections[name] || [];
-    if (!variants.length) {
-      return warn(`no CV variants yet — add one under "${options.label || 'CV'}" in the admin, or create content/${name}/default.md`);
-    }
-
-    const active = pickActive(variants, options.activeVariant, name);
+    const active = pickActive(variants, options.activeVariant, site, name);
+    if (!active) return;
     const url = normalizeUrl(options.url);
     const publish = (variant, at, indexed) => {
       const target = path.join(distPath, at.slice(1), 'index.html');
@@ -80,7 +95,7 @@ export default {
         return warn(`${at} is already a page on this site — the CV was not published there. Delete that page, or point the plugin's "url" option somewhere else.`);
       }
       const person = personOf(variant, site);
-      const content = cvHtml(variant, person);
+      const content = cvHtml(variant, person, name);
       let html = site.renderPage('page', { page: pageContext(variant, at, person, content) });
       // Only when the CV supplies a heading of its own — a variant that opted
       // out of the built-in header and doesn't provide one keeps the theme's.
@@ -96,6 +111,11 @@ export default {
       if (indexed) {
         addToSitemap(distPath, site.config.site.url + at, variant.date);
         addToSearchIndex(distPath, variant, at);
+        // A page borrowed from another collection is published twice: here,
+        // and at its own address. Leave one of them for search engines.
+        if (variant.url && variant.url !== at && options.hideSource !== false) {
+          removeFromSitemap(distPath, site.config.site.url + variant.url);
+        }
       }
     };
 
@@ -118,14 +138,35 @@ function withBasePath(url, site) {
 }
 const warn = (message) => console.log(`  ⚠ cv: ${message}`);
 
-/** The variant named in the settings; the only one when there's only one; else the first, loudly. */
-function pickActive(variants, activeVariant, name) {
+/**
+ * The active CV. Usually a variant in the CV collection, named by its filename;
+ * "<collection>/<slug>" borrows any other item on the site — a hand-built page
+ * that is a CV without following this plugin's shape. Null when there's nothing
+ * to publish. `quiet` suppresses the warnings for the per-page hook, which asks
+ * the same question on every page of the site.
+ */
+function pickActive(variants, activeVariant, site, name, quiet = false) {
   const wanted = String(activeVariant || '').trim().replace(/\.md$/, '');
+  const say = (message) => { if (!quiet) warn(message); };
+  const available = variants.map((v) => v.slug).join(', ');
+
+  if (wanted.includes('/')) {
+    const [from, ...rest] = wanted.split('/');
+    const slug = rest.join('/');
+    const borrowed = (site.collections[from] || []).find((item) => item.slug === slug);
+    if (borrowed) return borrowed;
+    say(`"${wanted}" isn't a page on this site — no item "${slug}" in the "${from}" collection.${variants.length ? ` Publishing "${variants[0].slug}" instead.` : ''}`);
+    return variants[0] || null;
+  }
+
+  if (!variants.length) {
+    say(`no CV to publish — add a variant in the admin, create content/${name}/default.md, or point "activeVariant" at a page you already have, as "pages/<slug>".`);
+    return null;
+  }
   const found = variants.find((v) => v.slug === wanted);
   if (found) return found;
-  const available = variants.map((v) => v.slug).join(', ');
-  if (wanted) warn(`no variant named "${wanted}" — publishing "${variants[0].slug}" instead. Available: ${available}. (Set "activeVariant" under Plugins → CV → Configure.)`);
-  else if (variants.length > 1) warn(`"activeVariant" isn't set — publishing "${variants[0].slug}". Available: ${available}.`);
+  if (wanted) say(`no variant named "${wanted}" — publishing "${variants[0].slug}" instead. Available: ${available}. (Set "activeVariant" under Plugins → CV → Configure.)`);
+  else if (variants.length > 1) say(`"activeVariant" isn't set — publishing "${variants[0].slug}". Available: ${available}.`);
   return variants[0];
 }
 
@@ -149,22 +190,38 @@ function pageContext(variant, url, person, content) {
 }
 
 /** The whole CV as HTML: identity header, metrics strip, then the Markdown body. */
-function cvHtml(variant, person) {
+function cvHtml(variant, person, cvCollection) {
   const parts = [];
   parts.push(`<div class="plain-cv" data-cv-variant="${esc(variant.slug)}">`);
   // A variant whose body is its own design ("header": false) still fills in
   // name and role — they're the browser tab and the link preview — but the
-  // plugin stays out of the way and renders no header of its own.
-  if (variant.header !== false) parts.push(headerHtml(variant, person));
+  // plugin stays out of the way and renders no header of its own. A page
+  // borrowed from elsewhere on the site is its own design by definition, so
+  // it opts in rather than out.
+  const header = variant.header === undefined ? variant.collection === cvCollection : variant.header !== false;
+  if (header) parts.push(headerHtml(variant, person));
   const metrics = list(variant.metrics).map((metric) => {
     const [value, label] = splitOnce(String(metric), '|');
     return `<div class="cv-metric"><span class="cv-metric-value">${esc(value)}</span>${label ? `<span class="cv-metric-label">${esc(label)}</span>` : ''}</div>`;
   });
   if (metrics.length) parts.push(`<div class="cv-metrics">${metrics.join('')}</div>`);
 
-  parts.push(`<div class="cv-body">\n${markMeta(variant.content || '')}\n</div>`);
+  parts.push(`<div class="cv-body">\n${bindPdf(markMeta(variant.content || ''), variant.pdf)}\n</div>`);
   parts.push('</div>');
   return parts.join('\n');
+}
+
+/**
+ * Point every <a data-cv-pdf> in the body at this variant's "pdf" file, so
+ * hand-written markup gets the download link of whichever CV is live. Without
+ * a pdf the link would go nowhere, so it's dropped instead.
+ */
+function bindPdf(html, pdf) {
+  return html.replace(/<a\b([^>]*\bdata-cv-pdf\b[^>]*)>([\s\S]*?)<\/a>/gi, (tag, attrs, label) => {
+    if (!pdf) return '';
+    const rest = attrs.replace(/\s*\bhref\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '').replace(/\s*\bdownload\b(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?/gi, '');
+    return `<a href="${esc(pdf)}" download${rest}>${label}</a>`;
+  });
 }
 
 /** Photo, name, role, summary and contacts — the CV's own page heading. */
@@ -231,6 +288,15 @@ function addToSitemap(distPath, loc, lastmod) {
   if (!fs.existsSync(file)) return;
   const entry = `  <url><loc>${escXml(loc)}</loc>${lastmod ? `<lastmod>${escXml(lastmod)}</lastmod>` : ''}</url>\n`;
   fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('</urlset>', `${entry}</urlset>`));
+}
+
+/** Drop one URL from sitemap.xml — the borrowed page the CV now stands in for. */
+function removeFromSitemap(distPath, loc) {
+  const file = path.join(distPath, 'sitemap.xml');
+  if (!fs.existsSync(file)) return;
+  const xml = fs.readFileSync(file, 'utf8');
+  const entry = new RegExp(`^ *<url><loc>${escXml(loc).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</loc>.*$\n?`, 'm');
+  if (entry.test(xml)) fs.writeFileSync(file, xml.replace(entry, ''));
 }
 
 /** Same for search-index.json, so the search plugin can find the CV. */

@@ -120,16 +120,51 @@ ink palette on `:root`, so re-declaring the same custom properties under
 }
 ```
 
+### A page you already have, as the CV
+
+A CV doesn't have to be shaped like this plugin's idea of one. Point
+**`activeVariant`** at any item on the site — `pages/cv-2026`, `posts/what-i-do`
+— and that page is what `/resume/` publishes. Everything the plugin does for a
+variant it does for that page: it's the live CV until you switch, and switching
+back is one setting.
+
+A borrowed page brings its own markup, so the plugin adds no header of its own
+unless the page sets `header: true`. The page also keeps its own address, which
+would leave two copies of one document for search engines — so the original is
+marked `noindex, follow`, its canonical points at the CV, and it comes out of
+`sitemap.xml`. Set **`hideSource: false`** to leave it alone.
+
+### The download button
+
+A variant's **`pdf:`** field is the file behind its download link — each CV can
+carry its own. In the plugin's header it becomes the download button. In markup
+of your own, put `data-cv-pdf` on the link:
+
+```html
+<a class="btn" data-cv-pdf>Download PDF</a>
+```
+
+The build fills in the `href` (and `download`) from the active variant, so the
+button follows whichever CV is live. A variant with no `pdf` has that link
+removed rather than left pointing nowhere, and the print button takes over.
+
+**Uploading one:** the admin's **Media** screen accepts any file under 5 MB —
+upload the PDF there, use *Copy path*, and paste it into the variant's `pdf`
+field. (The editor's own upload buttons are for images; the Media screen is the
+one that takes a PDF.) A file committed to the repo works just as well: any path
+the site serves is a valid value.
+
 ## Options
 
 | Option | Default | Meaning |
 | ------ | ------- | ------- |
-| `activeVariant` | `""` | Filename (without `.md`) of the variant to publish. Empty is fine when there's only one; with several, the build warns and publishes the first alphabetically. |
+| `activeVariant` | `""` | Filename (without `.md`) of the variant to publish, or `<collection>/<slug>` to publish a page you already have. Empty is fine when there's only one; with several, the build warns and publishes the first alphabetically. |
 | `url` | `/resume/` | Where the CV is published. |
 | `collection` | `cv` | Collection name — variants live in `content/<collection>/`. |
 | `label` | `CV` | What the collection is called in the admin sidebar. |
 | `printButton` | `true` | Add a "Download PDF" button that opens the browser's print dialog. |
 | `printButtonLabel` | `Download PDF` | Its wording. |
+| `hideSource` | `true` | When the active CV is a page borrowed from elsewhere on the site, keep its own address out of search results (`noindex`, canonical to the CV, dropped from the sitemap). |
 | `publishAllVariants` | `false` | Also publish every other variant at `<url><variant>/` as an unlisted page (`noindex`, kept out of the sitemap) — handy for sending one person a tailored link. |
 
 A variant with a `pdf:` field gets a real download link instead of the print

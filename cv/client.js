@@ -9,7 +9,7 @@ const options = JSON.parse(document.getElementById('plugin-options')?.textConten
 const cv = document.querySelector('.plain-cv');
 
 // A variant that links a real PDF file already has its own download link.
-if (cv && options.printButton !== false && !cv.querySelector('.cv-pdf')) {
+if (cv && options.printButton !== false && !cv.querySelector('.cv-pdf, [data-cv-pdf]')) {
   const contact = cv.querySelector('.cv-contact');
   const button = document.createElement('button');
   button.type = 'button';
