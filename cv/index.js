@@ -28,6 +28,7 @@ const FIELDS = [
   { name: 'pdf', type: 'text' },
   { name: 'description', type: 'text' },
   { name: 'date', type: 'date' }, // optional: when this CV was last revised — the page's sitemap lastmod
+  { name: 'header', type: 'boolean', default: true }, // false when the body brings its own header markup
   { name: 'draft', type: 'boolean', default: false },
 ];
 
@@ -77,8 +78,12 @@ export default {
       if (fs.existsSync(target)) {
         return warn(`${at} is already a page on this site — the CV was not published there. Delete that page, or point the plugin's "url" option somewhere else.`);
       }
-      let html = site.renderPage('page', { page: pageContext(variant, at, site) });
-      html = stripThemeHeading(html);
+      const person = personOf(variant, site);
+      const content = cvHtml(variant, person);
+      let html = site.renderPage('page', { page: pageContext(variant, at, person, content) });
+      // Only when the CV supplies a heading of its own — a variant that opted
+      // out of the built-in header and doesn't provide one keeps the theme's.
+      if (/<h1\b/i.test(content)) html = stripThemeHeading(html);
       if (!indexed) html = html.replace('</head>', '<meta name="robots" content="noindex">\n</head>');
       fs.mkdirSync(path.dirname(target), { recursive: true });
       fs.writeFileSync(target, html);
@@ -111,9 +116,10 @@ function pickActive(variants, activeVariant, name) {
   return variants[0];
 }
 
+const personOf = (variant, site) => variant.name || variant.title || site.config.site.title;
+
 /** The template context for one variant: the CV is the page's content. */
-function pageContext(variant, url, site) {
-  const person = variant.name || variant.title || site.config.site.title;
+function pageContext(variant, url, person, content) {
   // The <h1> is the CV's own, so page.title is only the browser tab and the
   // link preview — worth the job title as well as the name. A role line tends
   // to run "Senior Engineer — Backend · C# · Azure"; only the part before the
@@ -123,7 +129,7 @@ function pageContext(variant, url, site) {
     title: headline ? `${person} — ${headline}` : person,
     description: variant.description || variant.summary || '',
     url,
-    content: cvHtml(variant, person),
+    content,
     // Themes that print a cover or lede on pages get nothing to print.
     cover: null,
   };
@@ -133,7 +139,24 @@ function pageContext(variant, url, site) {
 function cvHtml(variant, person) {
   const parts = [];
   parts.push(`<div class="plain-cv" data-cv-variant="${esc(variant.slug)}">`);
-  parts.push('<header class="cv-header">');
+  // A variant whose body is its own design ("header": false) still fills in
+  // name and role — they're the browser tab and the link preview — but the
+  // plugin stays out of the way and renders no header of its own.
+  if (variant.header !== false) parts.push(headerHtml(variant, person));
+  const metrics = list(variant.metrics).map((metric) => {
+    const [value, label] = splitOnce(String(metric), '|');
+    return `<div class="cv-metric"><span class="cv-metric-value">${esc(value)}</span>${label ? `<span class="cv-metric-label">${esc(label)}</span>` : ''}</div>`;
+  });
+  if (metrics.length) parts.push(`<div class="cv-metrics">${metrics.join('')}</div>`);
+
+  parts.push(`<div class="cv-body">\n${markMeta(variant.content || '')}\n</div>`);
+  parts.push('</div>');
+  return parts.join('\n');
+}
+
+/** Photo, name, role, summary and contacts — the CV's own page heading. */
+function headerHtml(variant, person) {
+  const parts = ['<header class="cv-header">'];
   if (variant.photo) parts.push(`<img class="cv-photo" src="${esc(variant.photo)}" alt="${esc(person)}">`);
   parts.push('<div class="cv-identity">');
   parts.push(`<h1 class="cv-name">${esc(person)}</h1>`);
@@ -145,15 +168,6 @@ function cvHtml(variant, person) {
   if (variant.pdf) contacts.push(`<li class="cv-action"><a class="cv-pdf" href="${esc(variant.pdf)}" download>Download PDF</a></li>`);
   if (contacts.length) parts.push(`<ul class="cv-contact">${contacts.join('')}</ul>`);
   parts.push('</div></header>');
-
-  const metrics = list(variant.metrics).map((metric) => {
-    const [value, label] = splitOnce(String(metric), '|');
-    return `<div class="cv-metric"><span class="cv-metric-value">${esc(value)}</span>${label ? `<span class="cv-metric-label">${esc(label)}</span>` : ''}</div>`;
-  });
-  if (metrics.length) parts.push(`<div class="cv-metrics">${metrics.join('')}</div>`);
-
-  parts.push(`<div class="cv-body">\n${markMeta(variant.content || '')}\n</div>`);
-  parts.push('</div>');
   return parts.join('\n');
 }
 

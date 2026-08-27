@@ -45,6 +45,7 @@ metrics:
 pdf: /media/alex-rivera-cv.pdf  # optional: a real file to download, instead of
                                 # the print button
 date: 2026-08-01                # optional: last revised — the page's sitemap lastmod
+header: true                    # false when the body brings its own header markup
 draft: false
 ---
 
@@ -96,6 +97,26 @@ draws a lettered tile for a project with no logo.
 `cv-web-only` is how a web CV stays richer than a paper one: put the project
 cards and the writing list in it, and the PDF stays the lean two pages a
 recruiter expects. The photo and the download button are dropped in print too.
+
+### Variants that bring their own design
+
+A CV can be a design in its own right rather than a page in your theme's clothes.
+Set **`header: false`** and the plugin renders no header of its own — `name` and
+`role` still fill in the browser tab and the link preview, but the body's markup
+is the whole page, and the theme's page title is left alone unless that markup
+has an `<h1>` of its own. Style it from a `<style>` block in the body, or from a
+stylesheet the site already serves; the plugin only asks that the CV lives inside
+the `.plain-cv` wrapper it provides.
+
+Such a page usually wants its own colours on paper too. The print sheet sets its
+ink palette on `:root`, so re-declaring the same custom properties under
+`@media print` in the page's own (later) stylesheet takes precedence:
+
+```css
+@media print {
+  :root:root { --color-accent: #b68235; --color-text: #201f1d; }
+}
+```
 
 ## Options
 

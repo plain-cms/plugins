@@ -270,15 +270,21 @@
 
 @media print {
   html:has(.plain-cv) { font-size: 13px; } /* the tokens are rem-based, so this scales the whole CV */
-  body:has(.plain-cv) {
-    /* Ink on paper, whatever the site's scheme is. */
+  /* Ink on paper, whatever the site's scheme is. These land on :root, not on
+   * body: a variant that ships its own palette declares it at :root too, and
+   * an inherited custom property is resolved by proximity, so a declaration on
+   * body would beat it everywhere inside. At equal specificity the page's own
+   * (later) stylesheet wins, which is the point. */
+  :root:has(.plain-cv) {
     --color-bg: #fff;
     --color-surface: #fff;
     --color-text: #1a1a1a;
     --color-muted: #555;
     --color-accent: #000;
     --color-border: #ccc;
-    background: #fff !important;
+  }
+  body:has(.plain-cv) {
+    background: var(--color-bg) !important;
     max-width: 100%;
   }
   /* Nothing outside the page's own content belongs on paper — the masthead,
