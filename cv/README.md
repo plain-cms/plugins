@@ -1,199 +1,118 @@
 # cv
 
-A CV / résumé page built from Markdown — with as many **variants** as you need and
-exactly one of them live. Keep a general CV, an AI-roles CV and a German-market CV
-side by side in your repo, then switch which one the world sees from the admin's
-**Plugins → CV → Configure** screen. Publishing is a config change, not a rewrite.
+Your CV is a page you wrote. This plugin decides **which page is the live one**,
+publishes it at a stable address, attaches a PDF to its download button, and
+keeps the CVs you aren't using out of search results.
 
-The page is generated at build time: static HTML, styled with your theme's own
-colours and spacing, correct with JavaScript disabled, and laid out to print
-straight to a clean two-page PDF.
+There is no CV format to fill in and no structure to follow. Write the page any
+way you like — plain Markdown, your own HTML, your own stylesheet — and point the
+plugin at it. Switching to a different CV is one setting, so the URL you put on
+an application never changes while what it shows does.
 
 ## Quick start
 
-1. Install the plugin. It creates `content/cv/`, an empty **CV** collection that
-   shows up in the admin sidebar — one Markdown file per variant.
-2. Add your first variant: **CV → New** in the admin, or copy this plugin's
-   [`example.md`](example.md) to `content/cv/default.md` and edit it.
-3. Visit `/resume/`. With one variant there's nothing to configure.
-4. Add more variants whenever you need one (`content/cv/ai-engineer.md`), then set
-   **activeVariant** to the filename without `.md` to make it the live one.
+1. Write the page: **New page** in the admin, or a file in `content/pages/`.
+   Want a CV-shaped starting point? Copy [`sample-cv.md`](sample-cv.md) from this
+   folder to `content/pages/` and edit it. Skip it and write your own — nothing
+   here depends on it.
+2. In the admin: **Plugins → CV → Configure**, set **`page`** to that page —
+   `pages/resume`, or just `resume`.
+3. It's live at `/resume/`. Change `url` to publish it somewhere else, or clear
+   `url` to leave the CV at its own address and let the plugin do the rest.
 
-Non-active variants are not published — they exist in your repo and nowhere else,
-unless you turn on `publishAllVariants`.
+To switch CVs later, write another page and change `page`. Mark every page that
+is a CV with `cv: true` in its frontmatter and the ones you aren't using stay
+reachable but unindexed — a shelf of CVs with one on the wall.
 
-## Writing a variant
+## The download button
 
-Frontmatter carries the header; the Markdown body is the CV itself.
+Set **`pdf`** to a file the site serves and the button becomes a real download
+link. Where it goes is up to you:
 
-```markdown
----
-title: AI engineer            # this variant's name in the admin (required)
-name: Alex Rivera             # the person — the page's <h1> and <title>
-role: Senior Backend Engineer — Go · Postgres · AWS
-summary: One or two sentences that say what you do and for whom.
-description: Meta description for search results and link previews.
-photo: /media/profile.jpg
-contact:
-  - alex@example.com                                    # becomes a mailto: link
-  - github.com/alexrivera                               # becomes https://
-  - "[LinkedIn](https://linkedin.com/in/alexrivera)"    # a labelled link
-  - Lisbon, Portugal · EU citizen                       # plain text stays plain
-metrics:
-  - 12 yrs | in production      # "value | label" — rendered as a metrics strip
-  - 40k rps | peak traffic
-pdf: /media/alex-rivera-cv.pdf  # optional: a real file to download, instead of
-                                # the print button
-date: 2026-08-01                # optional: last revised — the page's sitemap lastmod
-header: true                    # false when the body brings its own header markup
-stylesheet: /cv-classical.css   # optional: a CSS file to link on this CV's page
-draft: false
----
+- **Anywhere you want it** — put `data-cv-download` on a link in your page and
+  that link *is* the button, keeping your own markup and classes:
+  ```html
+  <a class="my-button" data-cv-download>Download CV</a>
+  ```
+  The build fills in its `href` and `download`.
+- **Or let the plugin place it** — with no such link in the page,
+  `buttonPosition` puts one under the page title (`top`), at the end
+  (`bottom`), or nowhere at all (`none`).
 
-## About
+**With no PDF attached**, the same button prints the page instead — the browser's
+own "save as PDF" is one dialog away. That needs JavaScript, so it stays hidden
+until it's wired up, and never sits there dead.
 
-Prose.
+**Uploading a PDF:** the admin's **Media** screen takes any file under 5 MB.
+Upload it there, use *Copy path*, and paste `/media/2026/08/your-cv.pdf` into the
+`pdf` setting. A file committed to the repo works the same — any path the site
+serves is a valid value.
 
-## Experience
-
-### Northwind Payments — Staff Engineer
-*2021–Present | Lisbon*
-
-- What you did, with a number in it.
-```
-
-Rules worth knowing:
-
-- **`## headings` are the CV's sections** — name them whatever you like. They're
-  set off with a rule; `###` is a role or a project inside one.
-- **The italic line under a `###`** (`*2021–Present | Lisbon*`) is treated as that
-  entry's dates and place, and styled apart from the body text.
-- **The page's `<title>`** is "name — role", shortened to the part of the role
-  before its first separator (`Senior Engineer — Backend · Go` becomes
-  `Alex Rivera — Senior Engineer`). The `<h1>` on the page is the name alone.
-- **`draft: true`** hides a variant from the build entirely, active or not.
-- A variant is **never** published at its own URL unless `publishAllVariants` is on.
-
-### Building blocks
-
-The stylesheet ships a few extra pieces for the parts of a CV that aren't prose.
-Write them as HTML anywhere in the body (leave a blank line before and after, so
-the Markdown around them still renders):
-
-| Markup | What it gives you |
-| ------ | ----------------- |
-| `<table class="cv-skills"><tr><th>Backend</th><td>Go · Python</td></tr></table>` | A skills matrix: labelled rows that wrap on a phone |
-| `<div class="cv-cards"><div class="cv-card">…</div></div>` | Project cards: an icon, then a `<div class="cv-card-body">` with a heading (`<span class="cv-kicker">` for the aside in it), a line of prose, and a `<p class="cv-facts">` |
-| `<ul class="cv-pills"><li><a class="cv-pill" href="…"><strong>repo</strong> <span>what it is</span></a></li></ul>` | A compact strip of links — open-source repos, talks, certifications |
-| `<ul class="cv-grid"><li><a class="cv-tile" href="…"><div class="cv-tile-text"><strong>Name</strong><span>One line</span></div></a></li></ul>` | A tiled grid of smaller projects |
-| `<ul class="cv-dated"><li><a href="…">Title</a><time>March 2026</time></li></ul>` | A list with dates aligned to the right — writing, talks |
-| `<p class="cv-note">…</p>` | The closing availability note |
-| `<div class="cv-web-only">…</div>` | Shown on the page, dropped from the printed PDF |
-| `<div class="cv-print-only">…</div>` | The reverse — only appears in print |
-
-Icons are either an `<img>` or a `<span class="cv-icon" style="background-image: url('…')">`
-— both size themselves to the block they're in. `<span class="cv-icon cv-icon--letter">B</span>`
-draws a lettered tile for a project with no logo.
-
-`cv-web-only` is how a web CV stays richer than a paper one: put the project
-cards and the writing list in it, and the PDF stays the lean two pages a
-recruiter expects. The photo and the download button are dropped in print too.
-
-### Variants that bring their own design
-
-A CV can be a design in its own right rather than a page in your theme's clothes.
-Set **`header: false`** and the plugin renders no header of its own — `name` and
-`role` still fill in the browser tab and the link preview, but the body's markup
-is the whole page, and the theme's page title is left alone unless that markup
-has an `<h1>` of its own. Style it from a `<style>` block in the body, or — better when several variants
-share one design — put the CSS in a file the site serves and name it in
-**`stylesheet:`**, which links it last in the page's `<head>`. The plugin only
-asks that the CV lives inside the `.plain-cv` wrapper it provides.
-
-Such a page usually wants its own colours on paper too. The print sheet sets its
-ink palette on `:root`, so re-declaring the same custom properties under
-`@media print` in the page's own (later) stylesheet takes precedence:
-
-```css
-@media print {
-  :root:root { --color-accent: #b68235; --color-text: #201f1d; }
-}
-```
-
-### A page you already have, as the CV
-
-A CV doesn't have to be shaped like this plugin's idea of one. Point
-**`activeVariant`** at any item on the site — `pages/cv-2026`, `posts/what-i-do`
-— and that page is what `/resume/` publishes. Everything the plugin does for a
-variant it does for that page: it's the live CV until you switch, and switching
-back is one setting.
-
-A borrowed page brings its own markup, so the plugin adds no header of its own
-unless the page sets `header: true`. The page also keeps its own address, which
-would leave two copies of one document for search engines — so the original is
-marked `noindex, follow`, its canonical points at the CV, and it comes out of
-`sitemap.xml`. Set **`hideSource: false`** to leave it alone.
-
-### The download button
-
-A variant's **`pdf:`** field is the file behind its download link — each CV can
-carry its own. In the plugin's header it becomes the download button. In markup
-of your own, put `data-cv-pdf` on the link:
-
-```html
-<a class="btn" data-cv-pdf>Download PDF</a>
-```
-
-The build fills in the `href` (and `download`) from the active variant, so the
-button follows whichever CV is live. A variant with no `pdf` has that link
-removed rather than left pointing nowhere, and the print button takes over.
-
-**Uploading one:** the admin's **Media** screen accepts any file under 5 MB —
-upload the PDF there, use *Copy path*, and paste it into the variant's `pdf`
-field. (The editor's own upload buttons are for images; the Media screen is the
-one that takes a PDF.) A file committed to the repo works just as well: any path
-the site serves is a valid value.
+A single page can also carry its own `pdf:` in frontmatter, which wins over the
+setting. That's how two CVs ship two different PDFs.
 
 ## Options
 
 | Option | Default | Meaning |
 | ------ | ------- | ------- |
-| `activeVariant` | `""` | Filename (without `.md`) of the variant to publish, or `<collection>/<slug>` to publish a page you already have. Empty is fine when there's only one; with several, the build warns and publishes the first alphabetically. |
-| `url` | `/resume/` | Where the CV is published. |
-| `collection` | `cv` | Collection name — variants live in `content/<collection>/`. |
-| `label` | `CV` | What the collection is called in the admin sidebar. |
-| `printButton` | `true` | Add a "Download PDF" button that opens the browser's print dialog. |
-| `printButtonLabel` | `Download PDF` | Its wording. |
-| `hideSource` | `true` | When the active CV is a page borrowed from elsewhere on the site, keep its own address out of search results (`noindex`, canonical to the CV, dropped from the sitemap). |
-| `publishAllVariants` | `false` | Also publish every other variant at `<url><variant>/` as an unlisted page (`noindex`, kept out of the sitemap) — handy for sending one person a tailored link. |
+| `page` | `""` | The page that is your CV: `pages/resume`, `resume`, or `/resume-2026/`. |
+| `url` | `/resume/` | Where it's published. Empty leaves the CV at its own address. |
+| `pdf` | `""` | The download file. A page's own `pdf:` frontmatter overrides it. |
+| `buttonLabel` | `Download CV` | Wording, when the plugin places the button itself. |
+| `buttonPosition` | `top` | `top`, `bottom` or `none`. Ignored when the page has a `data-cv-download` link of its own. |
+| `hideOthers` | `true` | Point the CV's source page — and any other page marked `cv: true` — at the live CV: `noindex, follow`, canonical to it, dropped from the sitemap. |
 
-A variant with a `pdf:` field gets a real download link instead of the print
-button, so that variant needs no JavaScript at all.
+## Frontmatter a CV page may use
+
+All optional; a CV page is a normal page and needs none of them.
+
+| Key | Meaning |
+| --- | ------- |
+| `cv: true` | Marks the page as one of your CVs — listed in the build's warnings, and unindexed while it isn't the live one. |
+| `pdf:` | This CV's own download file. |
+| `stylesheet:` | A CSS file to link on the published CV — handy when several CVs share one design. |
+
+## Styling (optional)
+
+The plugin marks the CV's page `<body data-cv>` and ships a stylesheet keyed to
+it. None of it is imposed: it's a set of classes to use if you want them, all
+drawn from your theme's own colours and spacing, and `sample-cv.md` shows each
+one in place.
+
+| Class | What it gives you |
+| ----- | ----------------- |
+| `cv-body` | Wrap your content in it for CV typography — sectioned `h2` rules, tighter lists |
+| `cv-header`, `cv-photo`, `cv-identity`, `cv-role`, `cv-summary`, `cv-contact` | The identity block: photo beside name, role, and a row of contact links |
+| `cv-metrics` + `cv-metric` / `cv-metric-value` / `cv-metric-label` | A strip of numbers worth leading with |
+| `cv-skills` | A skills table: labelled rows that wrap on a phone |
+| `cv-meta` | The dates-and-place line under a role heading |
+| `cv-cards` / `cv-card`, `cv-pills` / `cv-pill`, `cv-grid` / `cv-tile`, `cv-dated`, `cv-note` | Projects, links, tiles, dated lists, the closing note |
+| `cv-web-only` / `cv-print-only` | Shown on the page but not in print, and the reverse |
+
+**Printing.** The CV page prints as a clean document: site chrome dropped, ink
+palette, `cv-web-only` sections removed, page breaks kept off headings. A page
+with its own design can override any of it — the palette is set on `:root`, so
+re-declaring those custom properties under `@media print` in your own (later)
+stylesheet wins.
 
 ## What it does to your site
 
-- **Creates `content/<collection>/` if it's missing** and registers it as a
-  data-only collection, so variants are editable in the admin. If your
-  `site.config.json` already defines a collection with that name, yours is used
-  as-is and nothing is created.
-- **Writes one page** (plus one per variant if `publishAllVariants` is on) into
-  `dist/` after the build, and adds the live one to `sitemap.xml` and
+- Publishes one page's HTML at `url`, and adds that address to `sitemap.xml` and
   `search-index.json`.
-- **Never overwrites an existing page.** If something else already publishes
-  `url` — a `content/pages/resume.md`, say — the plugin leaves it alone and says
-  so in the build log. Delete that page, or point `url` elsewhere.
-- **Removes the theme's page title block** on the CV page only: the CV brings its
-  own `<h1>` with the photo and contact details next to it.
+- Never overwrites an existing page: if something already publishes `url`, the
+  plugin says so in the build log and leaves it alone.
+- Marks the CV's own `<body>` with `data-cv`, adds the download button, and
+  (unless `hideOthers` is off) points duplicate copies at the live one.
 
 No network calls at build time or in the browser. The only client JavaScript is
-the print button.
+the print fallback.
 
-## Moving an existing résumé page in
+## Upgrading from 1.x
 
-If you already have a hand-built `content/pages/resume.md`:
-
-1. Move its body to `content/cv/default.md` and lift the header (name, role,
-   summary, photo, contact lines) into frontmatter.
-2. Delete the inline `<style>` block — this plugin's stylesheet covers it — and
-   rename any custom classes to the building blocks above.
-3. Delete `content/pages/resume.md`, so `/resume/` is free for the plugin.
+1.x kept CVs in a `content/cv/` collection with a schema of its own — name,
+role, contacts, metrics as frontmatter. 2.0 drops all of it: move those files
+into `content/pages/`, write the header as markup in the page (see
+`sample-cv.md`), and replace `activeVariant` with `page`. `publishAllVariants`,
+`collection`, `label`, `header` and `printButton` are gone; `pdf`,
+`stylesheet` and `data-cv-pdf` still work, the last as a synonym of
+`data-cv-download`.

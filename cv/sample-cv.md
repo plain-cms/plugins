@@ -1,21 +1,30 @@
 ---
-title: Default
-name: Alex Rivera
-role: Senior Backend Engineer — Go · Postgres · AWS
-summary: Backend engineer with 12 years shipping production services — from a payments platform handling 40k requests a second to small teams I've led end to end.
+title: Alex Rivera — Senior Backend Engineer
 description: Senior backend engineer in Lisbon — Go, Postgres and AWS, 12 years in production. Available for staff-level backend roles.
-photo: /media/profile.jpg
-contact:
-  - alex@example.com
-  - github.com/alexrivera
-  - example.com
-  - "[LinkedIn](https://www.linkedin.com/in/alexrivera)"
-  - Lisbon, Portugal · EU citizen
-metrics:
-  - 12 yrs | in production
-  - 40k rps | peak payments traffic
-  - 6 | engineers led
+cv: true
 ---
+
+<div class="cv-body">
+
+<header class="cv-header">
+  <img class="cv-photo" src="/media/profile.jpg" alt="Alex Rivera">
+  <div class="cv-identity">
+    <p class="cv-role">Senior Backend Engineer — Go · Postgres · AWS</p>
+    <p class="cv-summary">Backend engineer with 12 years shipping production services — from a payments platform handling 40k requests a second to small teams I've led end to end.</p>
+    <ul class="cv-contact">
+      <li><a href="mailto:alex@example.com">alex@example.com</a></li>
+      <li><a href="https://github.com/alexrivera">github.com/alexrivera</a></li>
+      <li>Lisbon, Portugal · EU citizen</li>
+      <li><a class="cv-button" data-cv-download>Download CV</a></li>
+    </ul>
+  </div>
+</header>
+
+<div class="cv-metrics">
+  <div class="cv-metric"><span class="cv-metric-value">12 yrs</span><span class="cv-metric-label">in production</span></div>
+  <div class="cv-metric"><span class="cv-metric-value">40k rps</span><span class="cv-metric-label">peak payments traffic</span></div>
+  <div class="cv-metric"><span class="cv-metric-value">6</span><span class="cv-metric-label">engineers led</span></div>
+</div>
 
 ## About
 
@@ -29,20 +38,19 @@ most recently as the technical lead of a six-person platform team.
   <tr><th>Backend</th><td>Go · Python · gRPC · event-driven services</td></tr>
   <tr><th>Data</th><td>PostgreSQL · Redis · Kafka — schema design, query tuning, migrations</td></tr>
   <tr><th>Cloud</th><td>AWS (ECS, RDS, SQS) · Terraform · GitHub Actions</td></tr>
-  <tr><th>Practice</th><td>Incident response · observability · mentoring</td></tr>
 </table>
 
 ## Experience
 
 ### Northwind Payments — Staff Engineer
-*2021–Present | Lisbon*
+<p class="cv-meta">2021–Present · Lisbon</p>
 
 - Rebuilt the settlement pipeline: 40k requests a second at peak, p99 under 80 ms.
 - Led the migration off a shared monolith database — zero downtime, six services.
 - On-call lead: cut paging volume by two thirds in a year.
 
 ### Corvus Logistics — Senior Backend Engineer
-*2017–2021 | Remote*
+<p class="cv-meta">2017–2021 · Remote</p>
 
 - Designed the routing service behind 2,000 daily deliveries.
 - Mentored four engineers, two of whom now lead teams of their own.
@@ -64,3 +72,5 @@ most recently as the technical lead of a six-person platform team.
 </div>
 
 <p class="cv-note">Open to staff-level backend roles in Lisbon or remote (CET ± 3).<br><a href="mailto:alex@example.com">alex@example.com</a></p>
+
+</div>

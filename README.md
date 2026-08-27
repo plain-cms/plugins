@@ -17,7 +17,7 @@ visitors' browsers — so every plugin listed here is reviewed before it ships. 
 | [related-posts](related-posts/) | build | Related-articles section under each post, scored by shared tags and title words. |
 | [toc](toc/) | build | Table of contents from each page's headings, injected after the title. |
 | [lightbox](lightbox/) | client | Click-to-zoom fullscreen viewer for content images with alt-text captions. |
-| [cv](cv/) | both | CV/résumé page from Markdown — many variants, one live at a time, prints to PDF. |
+| [cv](cv/) | both | Makes any page your live CV — switchable, with a PDF download button and a print-clean stylesheet. |
 
 ## How install works
 

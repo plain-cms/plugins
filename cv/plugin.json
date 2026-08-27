@@ -1,19 +1,17 @@
 {
   "name": "cv",
   "title": "CV / Résumé",
-  "version": "1.4.0",
-  "description": "Publishes a CV/résumé page from Markdown, with as many variants as you like — one is live at a time, chosen in this plugin's settings.",
-  "hooks": ["init", "afterBuild"],
+  "version": "2.0.0",
+  "description": "Publishes one of your pages as the live CV. Any page can be a CV — pick which one is current, attach a PDF, and put the download button where you want it.",
+  "hooks": ["renderPage", "afterBuild"],
   "client": { "js": "client.js", "css": "client.css" },
   "options": {
-    "activeVariant": "",
+    "page": "",
     "url": "/resume/",
-    "collection": "cv",
-    "label": "CV",
-    "printButton": true,
-    "printButtonLabel": "Download PDF",
-    "publishAllVariants": false,
-    "hideSource": true
+    "pdf": "",
+    "buttonLabel": "Download CV",
+    "buttonPosition": "top",
+    "hideOthers": true
   },
-  "note": "Each variant is one Markdown file in content/cv/ — edit them under \"CV\" in the sidebar. Set activeVariant to the filename (without .md) of the one that should be live — or to \"pages/<slug>\" to make a page you already have the live CV. Leave it empty when you only have one variant."
+  "note": "A CV is an ordinary page. Set \"page\" to the one that's current — \"pages/resume\", or just \"resume\" — and it's published at \"url\". Start from plugins/cv/sample-cv.md if you'd like a CV-shaped page to edit; write your own if you wouldn't."
 }

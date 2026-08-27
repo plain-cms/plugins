@@ -1,28 +1,18 @@
-// cv plugin — the print button, and nothing else.
+// cv plugin — the print fallback, and nothing else.
 //
-// Pure progressive enhancement: the CV itself is static HTML from the build,
-// and a browser can print it with Ctrl/Cmd-P whether or not this runs. A button
-// that calls window.print() only makes sense when there's JavaScript to call
-// it, so it's added here rather than baked into the page.
+// A CV with a PDF attached has a real download link, built into the page and
+// working without JavaScript. A CV without one gets the same button wired to
+// the browser's print dialog — which needs JavaScript, so the button stays
+// hidden (client.css) until this runs and marks it ready.
 
 const options = JSON.parse(document.getElementById('plugin-options')?.textContent || '{}').cv || {};
-const cv = document.querySelector('.plain-cv');
 
-// A variant that links a real PDF file already has its own download link.
-if (cv && options.printButton !== false && !cv.querySelector('.cv-pdf, [data-cv-pdf]')) {
-  const contact = cv.querySelector('.cv-contact');
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'cv-print';
-  button.textContent = options.printButtonLabel || 'Download PDF';
+for (const button of document.querySelectorAll('a[data-cv-print]')) {
+  button.setAttribute('role', 'button');
+  button.tabIndex = 0;
   button.addEventListener('click', () => window.print());
-
-  if (contact) {
-    const slot = document.createElement('li');
-    slot.className = 'cv-action';
-    slot.append(button);
-    contact.append(slot);
-  } else {
-    cv.querySelector('.cv-identity')?.append(button);
-  }
+  button.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.print(); }
+  });
+  button.classList.add('cv-print-ready');
 }

@@ -1,12 +1,13 @@
-/* cv plugin — styles for the published résumé page.
+/* cv plugin — optional styling for the page you've made your CV.
  *
- * Everything is scoped to .plain-cv, so this stylesheet (injected on every
- * page, like every plugin's) changes nothing anywhere else. Colour, spacing and
- * type come from the active theme's own custom properties — the CV inherits the
- * site's look, including its dark scheme, and the fallbacks below only matter
- * for themes that don't define a given token. */
+ * The plugin marks that page <body data-cv>, and nothing here applies anywhere
+ * else. None of it is required: a CV is your page, and these are classes you
+ * can reach for if you want them — the sample page (sample-cv.md) uses them.
+ * Colour, spacing and type come from the active theme's own custom properties,
+ * so the CV inherits the site's look including its dark scheme; the fallbacks
+ * below only matter for themes that don't define a given token. */
 
-.plain-cv {
+body[data-cv] {
   --cv-1: var(--space-1, 0.25rem);
   --cv-2: var(--space-2, 0.5rem);
   --cv-3: var(--space-3, 1rem);
@@ -71,6 +72,8 @@
 }
 .cv-contact li { margin: 0; }
 
+.cv-download { margin: var(--cv-3) 0; }
+.cv-button,
 .cv-print,
 .cv-pdf {
   display: inline-block;
@@ -83,8 +86,13 @@
   text-decoration: none;
   cursor: pointer;
 }
+.cv-button:hover,
 .cv-print:hover,
 .cv-pdf:hover { border-color: var(--color-accent); background: var(--cv-wash); }
+/* Without a PDF the button prints the page, which takes JavaScript — client.js
+ * adds .cv-print-ready once it has wired it, so it never sits there dead. */
+a[data-cv-print]:not(.cv-print-ready) { display: none; }
+a.cv-print-ready { cursor: pointer; }
 
 /* Metrics strip ------------------------------------------------------------ */
 
@@ -264,18 +272,18 @@
 
 /* Print — the same page, as a clean two-page PDF.
  *
- * Every rule is guarded by :has(.plain-cv) so printing any other page on the
- * site is untouched. Browsers without :has() simply print the CV with the
- * screen styles, which is still a correct page. */
+ * Every rule is guarded by the CV page's own [data-cv], so printing any other
+ * page on the site is untouched. Browsers without :has() simply print the CV
+ * with the screen styles, which is still a correct page. */
 
 @media print {
-  html:has(.plain-cv) { font-size: 13px; } /* the tokens are rem-based, so this scales the whole CV */
+  html:has(body[data-cv]) { font-size: 13px; } /* the tokens are rem-based, so this scales the whole CV */
   /* Ink on paper, whatever the site's scheme is. These land on :root, not on
    * body: a variant that ships its own palette declares it at :root too, and
    * an inherited custom property is resolved by proximity, so a declaration on
    * body would beat it everywhere inside. At equal specificity the page's own
    * (later) stylesheet wins, which is the point. */
-  :root:has(.plain-cv) {
+  :root:has(body[data-cv]) {
     --color-bg: #fff;
     --color-surface: #fff;
     --color-text: #1a1a1a;
@@ -283,25 +291,26 @@
     --color-accent: #000;
     --color-border: #ccc;
   }
-  body:has(.plain-cv) {
+  body[data-cv] {
     background: var(--color-bg) !important;
     max-width: 100%;
   }
   /* Nothing outside the page's own content belongs on paper — the masthead,
    * the footer, and any widget a plugin parked at the end of <body>. */
-  body:has(.plain-cv):has(> main) > *:not(main) { display: none !important; }
-  body:has(.plain-cv) > header,
-  body:has(.plain-cv) > footer,
-  body:has(.plain-cv) .skip-link { display: none !important; }
+  body[data-cv]:has(> main) > *:not(main) { display: none !important; }
+  body[data-cv] > header,
+  body[data-cv] > footer,
+  body[data-cv] .skip-link { display: none !important; }
 
-  .plain-cv .cv-print,
-  .plain-cv .cv-pdf,
-  .plain-cv .cv-photo,
-  .plain-cv .cv-web-only { display: none !important; }
-  .plain-cv .cv-print-only { display: revert; }
+  body[data-cv] .cv-button,
+  body[data-cv] .cv-print,
+  body[data-cv] .cv-pdf,
+  body[data-cv] .cv-photo,
+  body[data-cv] .cv-web-only { display: none !important; }
+  body[data-cv] .cv-print-only { display: revert; }
 
-  .plain-cv a { color: #000 !important; text-decoration: none; }
-  .plain-cv a::after { content: none !important; } /* some themes print " (url)" after links */
+  body[data-cv] a { color: #000 !important; text-decoration: none; }
+  body[data-cv] a::after { content: none !important; } /* some themes print " (url)" after links */
 
   .cv-header { margin-bottom: var(--cv-2); padding-bottom: var(--cv-2); }
   .cv-metrics { margin: var(--cv-2) 0; padding: var(--cv-2) 0; }

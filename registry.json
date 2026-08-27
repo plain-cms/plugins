@@ -48,7 +48,7 @@
     "id": "cv",
     "title": "CV / Résumé",
     "category": "content",
-    "description": "A CV page built from Markdown, with as many variants as you need — a general one, one tuned for AI roles, one per market — and exactly one live at a time, switched in the plugin's settings. Prints to a clean PDF.",
+    "description": "Turns any page into your live CV — pick which page is current, attach a PDF to its download button, and keep the CVs you aren't using out of search. No format to fill in; a sample page to start from if you want one.",
     "runsAt": "both",
     "author": "victorantos",
     "path": "cv"
