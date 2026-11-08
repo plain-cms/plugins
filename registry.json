@@ -52,5 +52,14 @@
     "runsAt": "both",
     "author": "victorantos",
     "path": "cv"
+  },
+  {
+    "id": "collection-feeds",
+    "title": "Collection Feeds",
+    "category": "content",
+    "description": "Build-time \"next events\" and \"latest posts\" lists from your collections, handed to every page in its own language — the next three dates, the next club night, the newest posts — zero client JavaScript.",
+    "runsAt": "build",
+    "author": "victorantos",
+    "path": "collection-feeds"
   }
 ]
