@@ -18,6 +18,7 @@ visitors' browsers — so every plugin listed here is reviewed before it ships. 
 | [toc](toc/) | build | Table of contents from each page's headings, injected after the title. |
 | [lightbox](lightbox/) | client | Click-to-zoom fullscreen viewer for content images with alt-text captions. |
 | [cv](cv/) | both | Makes any page your live CV — switchable, with a PDF download button and a print-clean stylesheet. |
+| [collection-feeds](collection-feeds/) | build | Next events and latest posts per page, in the page's language — upcoming/past split, next recurring meeting, type labels. |
 
 ## How install works
 
