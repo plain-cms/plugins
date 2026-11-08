@@ -1,6 +1,6 @@
 {
   "name": "collection-feeds",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Build-time \"next events\" and \"latest posts\" lists from your collections, handed to every page in its own language — the next three dates, the next club night, the newest posts — with zero client JavaScript.",
   "hooks": ["init", "transformContent"],
   "note": "Configure at least one feed in pluginOptions.collection-feeds.feeds — see the README for the two-line example.",

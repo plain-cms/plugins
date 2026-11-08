@@ -101,7 +101,7 @@ Every item in a feed is the item's frontmatter plus:
 | `url` | The item's URL, localised (`/fr/events/…/` on a French page when a translation exists). |
 | `slug`, `collection` | As in the engine. |
 | `date`, `type` | Read from the **original** (default-language) file, so a translation never sorts or filters differently. |
-| `dateFormatted` | The date in the page's language, as the engine formats it. |
+| `dateFormatted` | The date in the page's language, as the engine formats it — in the locale set in `site.locales` when there is one (`{ "en": "en-GB" }` gives "20 November 2026"). |
 | `weekday` | The weekday name in the page's language (`"Donnerstag"`). |
 | `typeLabel` | The type translated via `typeLabels`, else the type value itself. |
 | `inFeed` | `{ "<feed name>": true }` for every feed the item belongs to. |

@@ -32,10 +32,13 @@ const MODES = ['upcoming', 'latest'];
 let byLang = {};
 /** Normalised feed specs in config order, filled by init(). */
 let feeds = [];
+/** site.locales from the config: the date locale per language, e.g. { en: 'en-GB' }. */
+let locales = {};
 
 export default {
   init(site, options) {
     byLang = {};
+    locales = site.config.site.locales || {};
     feeds = normaliseFeeds(options, site.config.collections);
     if (!feeds.length) return;
 
@@ -79,7 +82,7 @@ export default {
       item.isPast = item[feed.dateField] < today;
       item.isUpcoming = !item.isPast;
     }
-    if (isIsoDate(item[feed.dateField])) item.weekday = weekday(item[feed.dateField], lang);
+    if (isIsoDate(item[feed.dateField])) item.weekday = weekday(item[feed.dateField], dateLocale(lang));
     if (item[feed.typeField] !== undefined) item.typeLabel = typeLabel(feed, item[feed.typeField], lang);
     const listUrl = listUrlFor(feed, site.config.collections[feed.collection], lang, defaultLang);
     if (listUrl) item.listUrl = listUrl;
@@ -125,6 +128,13 @@ function todayIso(options) {
   if (isIsoDate(options.today)) return options.today;
   // sv-SE formats as YYYY-MM-DD; the time zone decides when "today" rolls over.
   return new Date().toLocaleDateString('sv-SE', { timeZone: options.timeZone || 'UTC' });
+}
+
+/** The locale dates are written in: site.locales[lang] when set, else the
+ * language code itself — the engine's own rule (plain 1.21+), repeated here so
+ * the plugin also runs on older engines. */
+function dateLocale(lang) {
+  return locales[lang] || lang;
 }
 
 function weekday(isoDate, language) {
@@ -190,8 +200,8 @@ function localisedItems(bySlug, def, feed, lang, defaultLang) {
       type,
       inFeed,
       typeLabel: type === undefined ? undefined : typeLabel(feed, type, lang),
-      dateFormatted: formatDate(date, lang),
-      weekday: weekday(date, lang),
+      dateFormatted: formatDate(date, dateLocale(lang)),
+      weekday: weekday(date, dateLocale(lang)),
     });
   }
   return items;
